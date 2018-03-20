@@ -2,6 +2,9 @@ import random
 import numpy
 import collections
 
+dictionary = "abcdefghijklmnoprstuwxyz 0123456789"
+length = 100000
+
 #generates random string (with length) from given alphabet (dictionary)
 def generator(dictionary, length): 
     string = ""
@@ -52,15 +55,42 @@ def propability_generator(dictionary, prop_list):
     print(''.join(string))
     return string
     
+def conditional_generator(text):
+    lett1, lett2 = collections.Counter(text).most_common(2)
+    #detuple lett1 & lett2
+    lett1, x = lett1
+    lett2, x = lett2
+    
+    for w in [lett1, lett2]:
+        text_len = len(text)
+        lett_list = []      #list with letters after the most common
+        
+        for pos, char in enumerate(text):
+            if(char == w and pos + 1 < text_len):
+                lett_list.append(text[pos + 1])
+                
+        counter = collections.Counter(lett_list)
+        total = sum(counter.values(), 0.0)
+        #counter = {k: v / total for k, v in counter.items()}
+        print("DLA " + w + " ******************")
+        for word, freq in counter.most_common():
+            print(word + "\t" + str(freq / total)) 
+    
 
 if __name__ == '__main__':
-    dictionary = "abcdefghijklmnoprstuwxyz 0123456789"
-    length = 100000
+    
     f = open("data/norm_wiki_sample.txt","r")
     string = f.read()
+    #zad1
     #string = generator(dictionary, length)
-    #mean_length(string)
-    prob_list = lett_counter(string, dictionary)
-    string = propability_generator(dictionary, prob_list)
-    mean_length(string)
     
+    #zad2
+    #mean_length(string)
+    
+    #zad3
+    #prob_list = lett_counter(string, dictionary)
+    #string = propability_generator(dictionary, prob_list)
+    #mean_length(string)
+    
+    #zad4
+    conditional_generator(string)
