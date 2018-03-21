@@ -1,6 +1,7 @@
 import random
 import numpy
 import collections
+import re
 
 dictionary = "abcdefghijklmnoprstuwxyz 0123456789"
 length = 100000
@@ -75,7 +76,36 @@ def conditional_generator(text):
         print("DLA " + w + " ******************")
         for word, freq in counter.most_common():
             print(word + "\t" + str(freq / total)) 
+
+
+def getCharsAfter(text, lastChars):
+    list_after_chars = []
+    for ele in re.finditer(lastChars, text):
+        if (ele.end() + 1 < len(text)):
+            list_after_chars.append(text[ele.end()])
+    return list_after_chars
     
+
+def markov_chain(text, level, length):
+    outText = ""
+    if(level == 5):
+        outText = "probability"
+    else:
+        baseWords = text.split()
+        baseWords = [w for w in baseWords if (len(w) > 0 and w != '\n' and w != '\t')]
+        outText = random.choice(baseWords)[:level]
+
+    for i in range(length):
+        lastChars = outText[-level:]
+        lett_list = getCharsAfter(text, lastChars)
+        tmpLength = length
+        while( len(lett_list) == 0):
+            tmpLength -= 1
+            lastChars = outText[-tmpLength:]
+            lett_list = getCharsAfter(text, lastChars)
+        newChar = lett_list[random.randint(0,len(lett_list)-1)]
+        outText += newChar
+    return outText
 
 if __name__ == '__main__':
     
@@ -93,4 +123,8 @@ if __name__ == '__main__':
     #mean_length(string)
     
     #zad4
-    conditional_generator(string)
+    #conditional_generator(string)
+    
+    #zad5
+    text = markov_chain(string, 5, 200)
+    print(text)
