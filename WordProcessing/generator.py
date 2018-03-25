@@ -73,22 +73,36 @@ def getWordAfter(words, word):
         tmp_list.pop(0)
         tmp_list.append(words[ele])
     return list_words
-        
+         
+def mean_word_len(words):
+    sum_len = 0
+    for ele in words:
+        sum_len += len(ele)
+    print()
+    print("Średnia długość słowa: " + str(sum_len / len(words)) )
 
 
 def markov_chain(words, level, length):
+    #random first word choise
     outText = []
     outText.append(words[random.randint(0, len(words) - 1)])
+    #outText.append("probability")
+    print(outText[0] + " ", end='', flush=True)
     for i in range(0, length):
-        #print(outText)
+        #find list of words after last words in outText        
         word_list = getWordAfter(words, outText[-level:])
+        
+        #if in this level there is no words - level down
         tmp_level = level
         while( len(word_list) == 0 and tmp_level > 1):
-            print("ni ma szukamy: " + str(tmp_level))
             tmp_level -= 1
             word_list = getWordAfter(words, outText[-tmp_level:])
-        outText.append(word_list[random.randint(0,len(word_list)-1)])
-    print(outText)
+        
+        #from found words choise one in weighted propability
+        new_word = word_list[random.randint(0,len(word_list)-1)]
+        outText.append(new_word)
+        print(new_word + " ", end='', flush=True)
+    mean_word_len(outText)
     
     
 if __name__ == '__main__':
@@ -106,5 +120,5 @@ if __name__ == '__main__':
     #words_propab_gen(counter, cnt_len, 100)   
     
     #zad3.1
-    markov_chain(words, 2, 10)
+    markov_chain(words, 2, 200)
     
