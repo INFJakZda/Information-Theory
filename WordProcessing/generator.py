@@ -10,7 +10,7 @@ def text_normaliser(text):
     #seperate words
     words = text.split(" ")    
     #delete whitespace , new line, tabs
-    words = [w for w in words if (len(w) > 0 and w != '\n' and w != '\t')]    
+    words = [w.rstrip() for w in words if (len(w) > 0 and w != '\n' and w != '\t')]    
     return words
 
 
@@ -61,6 +61,13 @@ def words_propab_gen(counter, cnt_len, length):
     print(gen_words)
 
 
+def mean_word_len(words):
+    sum_len = 0
+    for ele in words:
+        sum_len += len(ele)
+    print()
+    print("Średnia długość słowa: " + str(sum_len / len(words)) )
+
 def getWordAfter(words, word):
     list_words = []
     len_word = len(word)
@@ -69,18 +76,10 @@ def getWordAfter(words, word):
         tmp_list.append(words[i])
     for ele in range(len_word, len(words)):
         if(tmp_list == word):
-            list_words.append(words[ele].rstrip())
+            list_words.append(words[ele])
         tmp_list.pop(0)
         tmp_list.append(words[ele])
     return list_words
-         
-def mean_word_len(words):
-    sum_len = 0
-    for ele in words:
-        sum_len += len(ele)
-    print()
-    print("Średnia długość słowa: " + str(sum_len / len(words)) )
-
 
 def markov_chain(words, level, length):
     #random first word choise
@@ -104,10 +103,68 @@ def markov_chain(words, level, length):
         print(new_word + " ", end='', flush=True)
     mean_word_len(outText)
     
+def chain_generator1(words, level):
+    chain = {}
+    for ele in words:
+        chain[ele] = []
+    for it in range(0, len(words) - 1):
+        word = words[it]
+        wordAfter = words[it + 1]
+        chain[word].append(wordAfter)
+    print(chain)
+    
+def chain_generator(words, level):
+    chain = {}
+
+    tmp_list = words[0:level]
+    #prepare the chain to have lists of words
+    for i in range(level, len(words)):
+        chain[str(tmp_list)] = []
+        tmp_list.append(words[i])
+        tmp_list.pop(0)
+    chain[str(tmp_list)] = []
+         
+    tmp_list = words[0:level]     
+    #fill the chain with words
+    for i in range(level, len(words)):
+        chain[str(tmp_list)].append(words[i])
+        tmp_list.append(words[i])
+        tmp_list.pop(0)
+    #for ele in chain:
+        #print(ele, "\t", chain[ele])
+    return chain
+    
+def markov_gen(words, level, length):
+    print("preparing chain....")
+    chain = chain_generator(words, level)
+    outText = []
+    outText.append(words[random.randint(0, len(words) - 1)])
+    #outText.append("probability")
+    print(outText[0] + " ", end='', flush=True)
+    #fill outText with random first words 
+    while(len(outText) < level):
+        word_list = getWordAfter(words, outText)
+        tmp_level = level
+        while( len(word_list) == 0 and tmp_level > 1):
+            tmp_level -= 1
+            word_list = getWordAfter(words, outText[-tmp_level:])
+        new_word = word_list[random.randint(0,len(word_list)-1)]
+        outText.append(new_word)
+        print(new_word + " ", end='', flush=True)
+    #main loop
+    for i in range(level, length):
+        word_list = chain[str(outText[-level:])]
+        new_word = word_list[random.randint(0,len(word_list)-1)]
+        outText.append(new_word)
+        print(new_word + " ", end='', flush=True)    
+    mean_word_len(outText)
+        
+        
     
 if __name__ == '__main__':
-    text = read_file("data/norm_wiki_sample.txt")
+    print("reading file...")
     #text = read_file("text.txt")
+    text = read_file("data/norm_wiki_sample.txt")
     words = text_normaliser(text)
     
     #zad1
@@ -120,5 +177,8 @@ if __name__ == '__main__':
     #words_propab_gen(counter, cnt_len, 100)   
     
     #zad3.1
-    markov_chain(words, 2, 200)
+    #markov_chain(words, 2, 2000)
+    
+    #zad3.2
+    markov_gen(words, 2, 20000)
     
