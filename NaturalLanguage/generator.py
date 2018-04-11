@@ -94,7 +94,8 @@ def markov_chain(text, level, length):
         baseWords = text.split()
         baseWords = [w for w in baseWords if (len(w) > 0 and w != '\n' and w != '\t')]
         outText = random.choice(baseWords)[:level]
-
+    
+    print(outText + ' ', end='', flush=True)
     for i in range(length):
         lastChars = outText[-level:]
         lett_list = getCharsAfter(text, lastChars)
@@ -105,10 +106,11 @@ def markov_chain(text, level, length):
             lett_list = getCharsAfter(text, lastChars)
         newChar = lett_list[random.randint(0,len(lett_list)-1)]
         outText += newChar
+        print(newChar, end='', flush=True)
     return outText
 
 if __name__ == '__main__':
-    
+    print("reading file...")
     f = open("data/norm_wiki_sample.txt","r")
     string = f.read()
     #zad1
@@ -126,5 +128,5 @@ if __name__ == '__main__':
     #conditional_generator(string)
     
     #zad5
-    text = markov_chain(string, 5, 200)
-    print(text)
+    text = markov_chain(string, 5, 2000)
+    #print(text)

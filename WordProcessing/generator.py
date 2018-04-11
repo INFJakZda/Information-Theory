@@ -180,5 +180,5 @@ if __name__ == '__main__':
     #markov_chain(words, 2, 2000)
     
     #zad3.2
-    markov_gen(words, 2, 20000)
+    markov_gen(words, 3, 20000)
     
